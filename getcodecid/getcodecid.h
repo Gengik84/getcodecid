@@ -443,6 +443,7 @@ static const struct
     { HDA_CODEC_ALC288, 0,		"Realtek ALC288" },
     { HDA_CODEC_ALC290, 0,		"Realtek ALC290" },
     { HDA_CODEC_ALC292, 0,          "Realtek ALC292" },
+    { HDA_CODEC_ALC292, 0x100001,   "Realtek ALC3232" },
     { HDA_CODEC_ALC293, 0,          "Realtek ALC293" },
     { HDA_CODEC_ALC298, 0,          "Realtek ALC298" },
     { HDA_CODEC_ALC660, 0,		"Realtek ALC660-VD" },
