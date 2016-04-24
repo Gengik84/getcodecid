@@ -274,6 +274,7 @@
             mach_vm_size_t size;
             if(IOConnectMapMemory64(connect, 0x2000, mach_task_self(), &address, &size, kIOMapAnywhere|kIOMapDefaultCache)==KERN_SUCCESS){
                 NSString *dump = [[NSString alloc] initWithBytes:(const void *)address length:(NSInteger)size encoding:NSUTF8StringEncoding];
+
                 [[NSRegularExpression regularExpressionWithPattern:@"Codec ID: 0x([0-9a-f]{8})" options:0 error:nil] enumerateMatchesInString:dump options:0 range:NSMakeRange(0, [dump length]) usingBlock:^void(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop){
                     long codecid = strtol([[dump substringWithRange:[result rangeAtIndex:1]] UTF8String], NULL, 16);
                     char *codecname = NULL;
@@ -283,9 +284,9 @@
                             codecname = gCodecList[n].name;
                             break;
                         }
-                    if(codecname==NULL)
+                    if(codecname == NULL)
                     {
-                        codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
+                        codecname = (codecid == 0) ? "NULL Codec" : "Unknown Codec";
                     }
                     NSDictionary *spec = @{
                                            @"device":[NSString stringWithFormat:pciFormat,
@@ -338,6 +339,7 @@
                 long revisionid;
                 char *codecname = NULL;
                 CFNumberRef codec = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecVendorID"), kCFAllocatorDefault, 0);
+                if (!codec) return nil;
                 CFNumberGetValue(codec, kCFNumberLongType, &codecid);
                 codecid &= 0x00000000FFFFFFFF;
                 CFRelease(codec);
@@ -428,24 +430,33 @@ int main(int argc, const char * argv[])
         // no matter other args print the codecs info..
         io_iterator_t itThis;
         
-        @autoreleasepool {
+        @autoreleasepool
+        {
             NSMutableDictionary *allCodecs = [NSMutableDictionary dictionary];
             // firstly see for VoodooHDA
-            if(IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceMatching("VoodooHDADevice"), &itThis)==KERN_SUCCESS) {
+            if(IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                            IOServiceMatching("VoodooHDADevice"), &itThis)==KERN_SUCCESS)
+            {
                 NSMutableDictionary *dict = [HDA voodooHDAwithIterator:itThis];
                 if (dict) [allCodecs addEntriesFromDictionary:dict];
             }
-            itThis = NULL;
-            // secondly see for AppleHDA
-            /* in case of same codec-id entry in both dictionaries (voodoo + Apple), the first take object from the second
-             this ensure missing value (like the revision) to be merged from AppleHDA output!
-             */
-            if(IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceMatching("AppleHDAController"), &itThis)==KERN_SUCCESS){
-                NSMutableDictionary *dict = [HDA appleHDAwithIterator:itThis];
-                if (dict) [allCodecs addEntriesFromDictionary:dict];
+            
+            if (allCodecs.allKeys.count == 0)
+            {
+                itThis = NULL;
+                // secondly see for AppleHDA
+                /* in case of same codec-id entry in both dictionaries (voodoo + Apple), the first take object from the second
+                 this ensure missing value (like the revision) to be merged from AppleHDA output!
+                 */
+                if(IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                                IOServiceMatching("AppleHDAController"), &itThis)==KERN_SUCCESS)
+                {
+                    NSMutableDictionary *dict = [HDA appleHDAwithIterator:itThis];
+                    if (dict) [allCodecs addEntriesFromDictionary:dict];
+                }
             }
             
-            if (allCodecs && allCodecs.count > 0)
+            if (allCodecs && allCodecs.allKeys.count > 0)
             {
                 for (NSString *codec in allCodecs.allKeys) {
                     NSMutableString *codecid, *revision, *device, *subdevice;
