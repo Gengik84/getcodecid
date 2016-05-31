@@ -415,11 +415,11 @@ static const struct
     { HDA_CODEC_CS4208, 0,		"Cirrus Logic CS4208" },
     { HDA_CODEC_CS4210, 0,		"Cirrus Logic CS4210" },
     { HDA_CODEC_CS4213, 0,		"Cirrus Logic CS4213" },
-    
+
     { HDA_CODEC_ALC221, 0,		"Realtek ALC221" },
     { HDA_CODEC_ALC231, 0,		"Realtek ALC231" },
     { HDA_CODEC_ALC233, 0,		"Realtek ALC233" },
-    { HDA_CODEC_ALC233, 0x100003,		"Realtek ALC3236" },
+    { HDA_CODEC_ALC233, 0x100003,	"Realtek ALC3236" },
     { HDA_CODEC_ALC235, 0,		"Realtek ALC235" },
     { HDA_CODEC_ALC255, 0,		"Realtek ALC255" },
     { HDA_CODEC_ALC256, 0,		"Realtek ALC256" },
@@ -429,6 +429,18 @@ static const struct
     { HDA_CODEC_ALC267, 0,		"Realtek ALC267" },
     { HDA_CODEC_ALC268, 0,		"Realtek ALC268" },
     { HDA_CODEC_ALC269, 0,		"Realtek ALC269" },
+    { HDA_CODEC_ALC269, 0x100100,	"Realtek ALC269VB" },
+    { HDA_CODEC_ALC269, 0x100202,	"Realtek ALC269VC" },
+
+//	{ 0x10ec0269, 0xfff0, 0x3010, "ALC277" },
+//	{ 0x10ec0269, 0xf0f0, 0x2010, "ALC259" },
+//	{ 0x10ec0269, 0xf0f0, 0x3010, "ALC258" },
+//	{ 0x10ec0269, 0x00f0, 0x0010, "ALC269VB" },
+//	{ 0x10ec0269, 0xffff, 0xa023, "ALC259" },
+//	{ 0x10ec0269, 0xffff, 0x6023, "ALC281X" },
+//	{ 0x10ec0269, 0x00f0, 0x0020, "ALC269VC" },
+//	{ 0x10ec0269, 0x00f0, 0x0030, "ALC269VD" },
+
     { HDA_CODEC_ALC270, 0,		"Realtek ALC270" },
     { HDA_CODEC_ALC272, 0,		"Realtek ALC272" },
     { HDA_CODEC_ALC273, 0,		"Realtek ALC273" },
@@ -442,6 +454,7 @@ static const struct
     { HDA_CODEC_ALC286, 0,		"Realtek ALC286" },
     { HDA_CODEC_ALC288, 0,		"Realtek ALC288" },
     { HDA_CODEC_ALC290, 0,		"Realtek ALC290" },
+    { HDA_CODEC_ALC290, 0x100003,   "Realtek ALC3241" },
     { HDA_CODEC_ALC292, 0,		"Realtek ALC292" },
     { HDA_CODEC_ALC292, 0x100001,   "Realtek ALC3232" },
     { HDA_CODEC_ALC293, 0,		"Realtek ALC293" },
@@ -455,6 +468,7 @@ static const struct
     { HDA_CODEC_ALC665, 0,		"Realtek ALC665" },
     { HDA_CODEC_ALC667, 0,		"Realtek ALC667" },
     { HDA_CODEC_ALC668, 0,		"Realtek ALC668" },
+    { HDA_CODEC_ALC668, 0x100003,	"Realtek ALC3661" },
     { HDA_CODEC_ALC670, 0,		"Realtek ALC670" },
     { HDA_CODEC_ALC671, 0,		"Realtek ALC671" },
     { HDA_CODEC_ALC680, 0,		"Realtek ALC680" },
@@ -471,12 +485,24 @@ static const struct
     { HDA_CODEC_ALC885, 0x100103,	"Realtek ALC889A" },
     { HDA_CODEC_ALC886, 0,		"Realtek ALC886" },
     { HDA_CODEC_ALC887, 0,		"Realtek ALC887" },
+	{ HDA_CODEC_ALC887, 0x100302,	"Realtek ALC887-VD" },
     { HDA_CODEC_ALC888, 0,		"Realtek ALC888" },
     { HDA_CODEC_ALC888, 0x100101,	"Realtek ALC1200" },
+ 	{ HDA_CODEC_ALC888, 0x100302,	"Realtek ALC888-VD" },
+//	{ 0x10ec0888, 0xf0f0, 0x3020, "ALC886" },
+
     { HDA_CODEC_ALC889, 0,		"Realtek ALC889" },
     { HDA_CODEC_ALC892, 0,		"Realtek ALC892" },
+
+//	{ 0x10ec0892, 0xffff, 0x8020, "ALC661" },
+//	{ 0x10ec0892, 0xffff, 0x8011, "ALC661" },
+//	{ 0x10ec0892, 0xffff, 0x4011, "ALC656" },
+
     { HDA_CODEC_ALC898, 0,		"Realtek ALC898" },
 //    { HDA_CODEC_ALC899, 0,		"Realtek ALC899" },
+
+//	{ 0x10ec0899, 0x2000, 0x2000, "ALC899" },
+
     { HDA_CODEC_ALC900, 0,		"Realtek ALC1150" },
     
     { HDA_CODEC_AD1882, 0,		"Analog Devices AD1882" },
