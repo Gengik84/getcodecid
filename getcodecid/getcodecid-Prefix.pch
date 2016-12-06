@@ -1,0 +1,53 @@
+//
+// Prefix header for all source files of the 'getcodecid' target in the 'getcodecid' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
+
+/* DEBUG_MODE: 
+    0 for normal output.
+    1 if you want show all output from AppleHDA and VoodooHDA, 
+    this also write VODOOHDA.plist and APPLEHDA.plist to your Desktop
+ */
+#define DEBUG_MODE 0
+
+// Changes/Info
+#define kgetcodecInfo \
+"--------------------------------------------------------------------------------\n\
+getcodecid\n\
+\n\
+Created by Andy Vandijck on 27/12/12.\n\
+Copyright (c) 2012-2015 AnV Software. All rights reserved.\n\
+\n\
+topic at:\n\
+http://www.insanelymac.com/forum/topic/285277-getcodecid-command-line-tool-to-detect-codec-id/page-1\n\
+\n\
+Changes:\n\
+\n\
+07/11/14\n\
+Micky1979:      fixed a bug for an NSMutablearray outside the @autoreleasepool.\n\
+03/04/15\n\
+InsanelyDeepak: added more codecs to match in getcodecid.h.\n\
+09/08/15\n\
+blackosx:       corrected the @autoreleasepool in the non-ARC version,\n\
+                reimported InsanelyDeepak changes.\n\
+10/08/15\n\
+Micky1979:      output modified to show also the device-ids and sub vendor-id.\n\
+10/08/15\n\
+ErmaC:          added the ability to show also the revision of the codec,\n\
+                added more codec from Enoch bootloader.\n\
+10/08/15\n\
+Micky1979:      rework of the main function, added new Class called HDA that\n\
+                handle output from both AppleHDA and VoodooHDA together.\n\
+                This way possible duplicates are merged in one array.\n\
+                Added this info page. Added DEBUG_MODE in the pch file.\n\
+                Added both workspace for ARC and non-ARC.\n\
+17/04/16\n\
+ErmaC:          added more codecs to match in getcodecid.h.\n\
+06/12/16\n\
+ErmaC:          Updated codecs.\n\
+--------------------------------------------------------------------------------\n"
+// Error usage
+#define kgetcodecErrorUsage "gecodecid can have only one argument -i (to show History),\notherwise no argument are required!\n"
