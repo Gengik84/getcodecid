@@ -48,6 +48,9 @@ Micky1979:      rework of the main function, added new Class called HDA that\n\
 ErmaC:          added more codecs to match in getcodecid.h.\n\
 06/12/16\n\
 ErmaC:          Updated codecs.\n\
+09/12/18\n\
+Foskvs,Gengik84: Added support for AppleGFXHDA devices (Polaris/Vega GPUs).\n\
+                 Fixed issue with both VoodooHDA and AppleHDA present.\n\
 --------------------------------------------------------------------------------\n"
 // Error usage
 #define kgetcodecErrorUsage "gecodecid can have only one argument -i (to show History),\notherwise no argument are required!\n"
