@@ -498,6 +498,9 @@
 
 int main(int argc, const char * argv[])
 {
+    // Clear screen
+    system( "clear" );
+    
     if (!getuid() && DEBUG_MODE) {
         printf("Error: You must not run this command as root user when in Debug Mode!\n");
         exit(2);
