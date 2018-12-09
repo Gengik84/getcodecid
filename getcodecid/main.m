@@ -343,38 +343,55 @@
                 CFNumberGetValue(codec, kCFNumberLongType, &codecid);
                 codecid &= 0x00000000FFFFFFFF;
                 CFRelease(codec);
-                
                 // Need to look for "IOHDACodecRevisionID" and parse it
                 CFNumberRef revision = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecRevisionID"), kCFAllocatorDefault, 0);
                 CFNumberGetValue(revision, kCFNumberLongType, &revisionid);
-                
                 // First pass: match codecid abd revisionid?
-                for(int n = 0; gCodecList[n].name; n++)
-                {
-                    if( HDA_DEV_MATCH(gCodecList[n].id, codecid) && HDA_DEV_MATCH(gCodecList[n].rev_id, revisionid) )
-                    {
-                        
-                        codecname = gCodecList[n].name;
-                        break;
-                    }
-                }
-
-                // Second pass: match for "generic" codecid
-                if( codecname == NULL )
-                {
+                if([audio.vendor integerValue] == 0x1002){
+                    long ven,dev,vendev;
+                    ven=[audio.vendor integerValue];
+                    dev=[audio.device integerValue];
+                    vendev=(ven<<16)|(dev);
+                    
+                    // First pass: match codecid abd revisionid?
                     for(int n = 0; gCodecList[n].name; n++)
                     {
-                        if( HDA_DEV_MATCH(gCodecList[n].id, codecid))
+                        if( HDA_DEV_MATCH(gCodecList[n].id, vendev) )
                         {
                             
                             codecname = gCodecList[n].name;
                             break;
                         }
                     }
-                    // Here we facing the case where the codecid is not in the list
+                }
+                else{
+                    for(int n = 0; gCodecList[n].name; n++)
+                    {
+                        if( HDA_DEV_MATCH(gCodecList[n].id, codecid) && HDA_DEV_MATCH(gCodecList[n].rev_id, revisionid) )
+                        {
+                            
+                            codecname = gCodecList[n].name;
+                            break;
+                        }
+                    }
+
+                    // Second pass: match for "generic" codecid
                     if( codecname == NULL )
                     {
-                        codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
+                        for(int n = 0; gCodecList[n].name; n++)
+                        {
+                            if( HDA_DEV_MATCH(gCodecList[n].id, codecid))
+                            {
+                            
+                                codecname = gCodecList[n].name;
+                                break;
+                            }
+                        }
+                        // Here we facing the case where the codecid is not in the list
+                       if( codecname == NULL )
+                       {
+                           codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
+                       }
                     }
                 }
 
@@ -397,13 +414,101 @@
         IOObjectRelease(parent);
         IOObjectRelease(service);
     }
-    IOObjectRelease(itThis);
-    IOObjectRelease(itThis);
+    //IOObjectRelease(itThis);
+    //IOObjectRelease(itThis);
     if (DEBUG_MODE) {
         NSString *desk = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/APPLEHDA.plist"];
         NSLog(@"APPLEHDA = %@\n", temp);
         [temp writeToFile:desk atomically:YES];
     }
+    if (temp && temp.count > 0) return temp;
+    return nil;
+}
+
++ (NSMutableDictionary *)appleGFXHDAwithIterator:(io_iterator_t)itThis
+{
+    NSMutableDictionary *temp = [NSMutableDictionary dictionary];
+    NSString *pciFormat = @"0x%04X%04X";
+    
+    io_service_t service;
+    io_service_t parent;
+    io_name_t name;
+    while((service = IOIteratorNext(itThis)))
+    {
+        IORegistryEntryGetParentEntry(service, kIOServicePlane, &parent);
+        IORegistryEntryGetName(parent, name);
+        io_service_t child;
+        pciDevice *audio = [pciDevice create:parent];
+        io_iterator_t itChild;
+        if (IORegistryEntryGetChildIterator(service, kIOServicePlane, &itChild) == KERN_SUCCESS)
+        {
+            
+            while ((child = IOIteratorNext(itChild)))
+            {
+                long codecid;
+                long revisionid;
+                char *codecname = NULL;
+                CFNumberRef codec = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("vendorcodecID"), kCFAllocatorDefault, 0);
+                if (!codec) return nil;
+                CFNumberGetValue(codec, kCFNumberLongType, &codecid);
+                codecid &= 0x00000000FFFFFFFF;
+                CFRelease(codec);
+                
+                long ven,dev,vendev;
+                ven=[audio.vendor integerValue];
+                dev=[audio.device integerValue];
+                vendev=(ven<<16)|(dev);
+                
+                // First pass: match codecid abd revisionid?
+                for(int n = 0; gCodecList[n].name; n++)
+                {
+                    if( HDA_DEV_MATCH(gCodecList[n].id, vendev) )
+                    {
+                        
+                        codecname = gCodecList[n].name;
+                        break;
+                    }
+                }
+                
+                // Second pass: match for "generic" codecid
+                if( codecname == NULL )
+                {/* // Not needed without revision
+                    for(int n = 0; gCodecList[n].name; n++)
+                    {
+                        if( HDA_DEV_MATCH(gCodecList[n].id, codecid))
+                        {
+                            
+                            codecname = gCodecList[n].name;
+                            break;
+                        }
+                    }*/
+                    // Here we facing the case where the codecid is not in the list
+                    if( codecname == NULL )
+                    {
+                        codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
+                    }
+                }
+                
+                NSDictionary *spec = @{
+                                       @"device":[NSString stringWithFormat:pciFormat,
+                                                  [audio.vendor integerValue],
+                                                  [audio.device integerValue]],
+                                       @"subdevice":[NSString stringWithFormat:pciFormat,
+                                                     [audio.subVendor integerValue],
+                                                     [audio.subDevice integerValue]],
+                                       @"GFX":@"true",
+                                       @"model":[NSString stringWithUTF8String:codecname]
+                                       };
+                [temp setObject:spec forKey:[NSString stringWithFormat:@"0x%08lX", codecid]];
+                IOObjectRelease(child);
+            }
+            IOObjectRelease(itChild);
+        }
+        IOObjectRelease(parent);
+        IOObjectRelease(service);
+    }
+    //IOObjectRelease(itThis);
+    //IOObjectRelease(itThis);
     if (temp && temp.count > 0) return temp;
     return nil;
 }
@@ -454,7 +559,17 @@ int main(int argc, const char * argv[])
                     NSMutableDictionary *dict = [HDA appleHDAwithIterator:itThis];
                     if (dict) [allCodecs addEntriesFromDictionary:dict];
                 }
+                if(IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                                IOServiceMatching("AppleGFXHDAController"), &itThis)==KERN_SUCCESS)
+                {
+                    NSMutableDictionary *dict = [HDA appleGFXHDAwithIterator:itThis];
+                    if (dict) [allCodecs addEntriesFromDictionary:dict];
+                }
+                
             }
+            
+            IOObjectRelease(itThis);
+            IOObjectRelease(itThis);
             
             if (allCodecs && allCodecs.allKeys.count > 0)
             {
@@ -487,7 +602,12 @@ int main(int argc, const char * argv[])
                         //-----------------------------------------------
                         printf("(AppleHDA)\t%s (%s) Rev.(%s)\n\t\tController %s (sub-ven:%s)\n",
                                model.UTF8String, codecid.UTF8String, revision.UTF8String, device.UTF8String, subdevice.UTF8String);
-                    } else {
+                    }
+                    else if([[allCodecs objectForKey:codec] objectForKey:@"GFX"]) {
+                        printf("(AppleGFXHDA)\t%s (%s)\n\t\tController %s (sub-ven:%s)\n",
+                               model.UTF8String, codecid.UTF8String, device.UTF8String, subdevice.UTF8String);
+                    }
+                    else {
                         printf("(VoodooHDA)\t%s (%s)\n\t\tController %s (sub-ven:%s)\n",
                                model.UTF8String, codecid.UTF8String, device.UTF8String, subdevice.UTF8String);
                     }
