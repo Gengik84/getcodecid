@@ -522,6 +522,7 @@ int main(int argc, const char * argv[])
         
         @autoreleasepool
         {
+            itThis = NULL;
             NSMutableDictionary *allCodecs = [NSMutableDictionary dictionary];
             // firstly see for VoodooHDA
             if(IOServiceGetMatchingServices(kIOMasterPortDefault,
@@ -531,27 +532,25 @@ int main(int argc, const char * argv[])
                 if (dict) [allCodecs addEntriesFromDictionary:dict];
             }
             
-            if (allCodecs.allKeys.count == 0)
+            
+            // secondly see for AppleHDA
+            /* in case of same codec-id entry in both dictionaries (voodoo + Apple), the first take object from the second
+             this ensure missing value (like the revision) to be merged from AppleHDA output!
+            */
+            if(IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                            IOServiceMatching("AppleHDAController"), &itThis)==KERN_SUCCESS)
             {
-                itThis = NULL;
-                // secondly see for AppleHDA
-                /* in case of same codec-id entry in both dictionaries (voodoo + Apple), the first take object from the second
-                 this ensure missing value (like the revision) to be merged from AppleHDA output!
-                 */
-                if(IOServiceGetMatchingServices(kIOMasterPortDefault,
-                                                IOServiceMatching("AppleHDAController"), &itThis)==KERN_SUCCESS)
-                {
-                    NSMutableDictionary *dict = [HDA appleHDAwithIterator:itThis];
-                    if (dict) [allCodecs addEntriesFromDictionary:dict];
-                }
-                if(IOServiceGetMatchingServices(kIOMasterPortDefault,
-                                                IOServiceMatching("AppleGFXHDAController"), &itThis)==KERN_SUCCESS)
-                {
-                    NSMutableDictionary *dict = [HDA appleGFXHDAwithIterator:itThis];
-                    if (dict) [allCodecs addEntriesFromDictionary:dict];
-                }
-                
+                NSMutableDictionary *dict = [HDA appleHDAwithIterator:itThis];
+                if (dict) [allCodecs addEntriesFromDictionary:dict];
             }
+            if(IOServiceGetMatchingServices(kIOMasterPortDefault,
+                                            IOServiceMatching("AppleGFXHDAController"), &itThis)==KERN_SUCCESS)
+            {
+                NSMutableDictionary *dict = [HDA appleGFXHDAwithIterator:itThis];
+                if (dict) [allCodecs addEntriesFromDictionary:dict];
+            }
+                
+            
             
             IOObjectRelease(itThis);
             IOObjectRelease(itThis);
