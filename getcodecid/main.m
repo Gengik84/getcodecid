@@ -414,8 +414,6 @@
         IOObjectRelease(parent);
         IOObjectRelease(service);
     }
-    //IOObjectRelease(itThis);
-    //IOObjectRelease(itThis);
     if (DEBUG_MODE) {
         NSString *desk = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop/APPLEHDA.plist"];
         NSLog(@"APPLEHDA = %@\n", temp);
@@ -446,7 +444,6 @@
             while ((child = IOIteratorNext(itChild)))
             {
                 long codecid;
-                long revisionid;
                 char *codecname = NULL;
                 CFNumberRef codec = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("vendorcodecID"), kCFAllocatorDefault, 0);
                 if (!codec) return nil;
@@ -472,21 +469,8 @@
                 
                 // Second pass: match for "generic" codecid
                 if( codecname == NULL )
-                {/* // Not needed without revision
-                    for(int n = 0; gCodecList[n].name; n++)
-                    {
-                        if( HDA_DEV_MATCH(gCodecList[n].id, codecid))
-                        {
-                            
-                            codecname = gCodecList[n].name;
-                            break;
-                        }
-                    }*/
-                    // Here we facing the case where the codecid is not in the list
-                    if( codecname == NULL )
-                    {
-                        codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
-                    }
+                {
+                    codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
                 }
                 
                 NSDictionary *spec = @{
@@ -507,8 +491,6 @@
         IOObjectRelease(parent);
         IOObjectRelease(service);
     }
-    //IOObjectRelease(itThis);
-    //IOObjectRelease(itThis);
     if (temp && temp.count > 0) return temp;
     return nil;
 }
