@@ -7,3 +7,4 @@
 - [ErmaC](https://www.insanelymac.com/forum/profile/364799-ermac/) for some addictions.
 - [Micky1979](https://github.com/Micky1979) for some addictions.
 - [Foskvs](https://github.com/foskvs) for addictions.
+- [The PCI ID Repository](http://pci-ids.ucw.cz) for multiple infos.
