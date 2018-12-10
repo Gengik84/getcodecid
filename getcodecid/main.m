@@ -335,79 +335,82 @@
         {
             while ((child = IOIteratorNext(itChild)))
             {
-                long codecid;
-                long revisionid;
-                char *codecname = NULL;
-                CFNumberRef codec = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecVendorID"), kCFAllocatorDefault, 0);
-                if (!codec) return nil;
-                CFNumberGetValue(codec, kCFNumberLongType, &codecid);
-                codecid &= 0x00000000FFFFFFFF;
-                CFRelease(codec);
-                // Need to look for "IOHDACodecRevisionID" and parse it
-                CFNumberRef revision = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecRevisionID"), kCFAllocatorDefault, 0);
-                CFNumberGetValue(revision, kCFNumberLongType, &revisionid);
-                // First pass: match codecid abd revisionid?
-                if([audio.vendor integerValue] == 0x1002){
-                    long ven,dev,vendev;
-                    ven=[audio.vendor integerValue];
-                    dev=[audio.device integerValue];
-                    vendev=(ven<<16)|(dev);
-                    
+                if((CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecVendorID"), kCFAllocatorDefault, 0) != 0)   // Solves issues with detecting audio after sleep on connectorless IGPUs
+                {
+                    long codecid;
+                    long revisionid;
+                    char *codecname = NULL;
+                    CFNumberRef codec = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecVendorID"), kCFAllocatorDefault, 0);
+                    if (!codec) return nil;
+                    CFNumberGetValue(codec, kCFNumberLongType, &codecid);
+                    codecid &= 0x00000000FFFFFFFF;
+                    CFRelease(codec);
+                    // Need to look for "IOHDACodecRevisionID" and parse it
+                    CFNumberRef revision = (CFNumberRef)IORegistryEntryCreateCFProperty(child, CFSTR("IOHDACodecRevisionID"), kCFAllocatorDefault, 0);
+                    CFNumberGetValue(revision, kCFNumberLongType, &revisionid);
                     // First pass: match codecid abd revisionid?
-                    for(int n = 0; gCodecList[n].name; n++)
-                    {
-                        if( HDA_DEV_MATCH(gCodecList[n].id, vendev) )
-                        {
-                            
-                            codecname = gCodecList[n].name;
-                            break;
-                        }
-                    }
-                }
-                else{
-                    for(int n = 0; gCodecList[n].name; n++)
-                    {
-                        if( HDA_DEV_MATCH(gCodecList[n].id, codecid) && HDA_DEV_MATCH(gCodecList[n].rev_id, revisionid) )
-                        {
-                            
-                            codecname = gCodecList[n].name;
-                            break;
-                        }
-                    }
-
-                    // Second pass: match for "generic" codecid
-                    if( codecname == NULL )
-                    {
+                    if([audio.vendor integerValue] == 0x1002){
+                        long ven,dev,vendev;
+                        ven = [audio.vendor integerValue];
+                        dev = [audio.device integerValue];
+                        vendev = (ven<<16)|(dev);
+                    
+                        // First pass: match codecid abd revisionid?
                         for(int n = 0; gCodecList[n].name; n++)
                         {
-                            if( HDA_DEV_MATCH(gCodecList[n].id, codecid))
+                            if( HDA_DEV_MATCH(gCodecList[n].id, vendev) )
                             {
                             
                                 codecname = gCodecList[n].name;
                                 break;
                             }
                         }
-                        // Here we facing the case where the codecid is not in the list
-                       if( codecname == NULL )
-                       {
-                           codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
-                       }
                     }
-                }
+                    else{
+                        for(int n = 0; gCodecList[n].name; n++)
+                        {
+                            if( HDA_DEV_MATCH(gCodecList[n].id, codecid) && HDA_DEV_MATCH(gCodecList[n].rev_id, revisionid) )
+                            {
+                            
+                                codecname = gCodecList[n].name;
+                                break;
+                            }
+                        }
 
-                NSDictionary *spec = @{
-                                       @"device":[NSString stringWithFormat:pciFormat,
-                                                  [audio.vendor integerValue],
-                                                  [audio.device integerValue]],
-                                       @"subdevice":[NSString stringWithFormat:pciFormat,
-                                                     [audio.subVendor integerValue],
-                                                     [audio.subDevice integerValue]],
-                                       @"revisionid":[NSString stringWithFormat:@"0x%08lX",
-                                                      revisionid],
-                                       @"model":[NSString stringWithUTF8String:codecname]
-                                       };
-                [temp setObject:spec forKey:[NSString stringWithFormat:@"0x%08lX", codecid]];
-                IOObjectRelease(child);
+                        // Second pass: match for "generic" codecid
+                        if( codecname == NULL )
+                        {
+                            for(int n = 0; gCodecList[n].name; n++)
+                            {
+                                if( HDA_DEV_MATCH(gCodecList[n].id, codecid))
+                                {
+                            
+                                    codecname = gCodecList[n].name;
+                                    break;
+                                }
+                            }
+                            // Here we facing the case where the codecid is not in the list
+                            if( codecname == NULL )
+                            {
+                                codecname = (codecid==0) ? "NULL Codec" : "Unknown Codec";
+                            }
+                        }
+                    }
+
+                    NSDictionary *spec = @{
+                                           @"device":[NSString stringWithFormat:pciFormat,
+                                                      [audio.vendor integerValue],
+                                                      [audio.device integerValue]],
+                                           @"subdevice":[NSString stringWithFormat:pciFormat,
+                                                         [audio.subVendor integerValue],
+                                                         [audio.subDevice integerValue]],
+                                           @"revisionid":[NSString stringWithFormat:@"0x%08lX",
+                                                          revisionid],
+                                           @"model":[NSString stringWithUTF8String:codecname]
+                                           };
+                    [temp setObject:spec forKey:[NSString stringWithFormat:@"0x%08lX", codecid]];
+                    IOObjectRelease(child);
+                }
             }
             IOObjectRelease(itChild);
         }
@@ -554,6 +557,7 @@ int main(int argc, const char * argv[])
             
             IOObjectRelease(itThis);
             IOObjectRelease(itThis);
+            
             
             if (allCodecs && allCodecs.allKeys.count > 0)
             {
