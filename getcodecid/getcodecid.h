@@ -388,6 +388,7 @@
 #define HDA_CODEC_INTELVLV	HDA_CODEC_CONSTRUCT(INTEL, 0x2882) // Valleyview2 HDMI
 #define HDA_CODEC_INTELBSW	HDA_CODEC_CONSTRUCT(INTEL, 0x2883) // Braswell HDMI
 #define HDA_CODEC_INTELCL	HDA_CODEC_CONSTRUCT(INTEL, 0x29fb) // Crestline HDMI
+#define HDA_CODEC_INTELCFL    HDA_CODEC_CONSTRUCT(INTEL, 0x280d) // Coffelake HDMI
 #define HDA_CODEC_INTELXXXX	HDA_CODEC_CONSTRUCT(INTEL, 0xffff)
 
 /* Sigmatel */
@@ -816,6 +817,7 @@ static const struct
     { HDA_CODEC_INTELVLV, 0,	"Intel Valleyview2 HDMI" },
     { HDA_CODEC_INTELBSW, 0,	"Intel Braswell HDMI" },
     { HDA_CODEC_INTELCL, 0,		"Intel Crestline" },
+    { HDA_CODEC_INTELCFL, 0, "Intel Coffee Lake HDMI" },
     
     { HDA_CODEC_SII1390, 0,		"Silicon Image SiI1390 HDMi" },
     { HDA_CODEC_SII1392, 0,		"Silicon Image SiI1392 HDMi" },
