@@ -355,6 +355,7 @@
 #define HDA_CODEC_CX20952       HDA_CODEC_CONSTRUCT(CONEXANT, 0x51d7)
 #define HDA_CODEC_CX8050        HDA_CODEC_CONSTRUCT(CONEXANT, 0x1f72)
 #define HDA_CODEC_CX8200        HDA_CODEC_CONSTRUCT(CONEXANT, 0x2008)
+#define HDA_CODEC_CX8400        HDA_CODEC_CONSTRUCT(CONEXANT, 0x20d0)
 #define HDA_CODEC_CXXXXX        HDA_CODEC_CONSTRUCT(CONEXANT, 0xffff)
 
 /* Chrontel 0x17e8 */
@@ -709,8 +710,9 @@ static const struct
     { HDA_CODEC_CX20756, 0,		"Conexant CX20756" },
     { HDA_CODEC_CX20757, 0,		"Conexant CX20757" },
     { HDA_CODEC_CX20952, 0,		"Conexant CX20952" },
-    { HDA_CODEC_CX8050, 0,      "Conexant CX8050" },
-    { HDA_CODEC_CX8200, 0,		"Conexant CX8200" },
+    { HDA_CODEC_CX8050, 0,   "Conexant CX8050" },
+    { HDA_CODEC_CX8200, 0,		 "Conexant CX8200" },
+    { HDA_CODEC_CX8400, 0,   "Conexant CX8400" },
    
  
     { HDA_CODEC_VT1708_8, 0,	"VIA VT1708_8" },
