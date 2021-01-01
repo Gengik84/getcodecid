@@ -85,6 +85,7 @@
 #define HDA_CODEC_ALC1150           HDA_CODEC_CONSTRUCT(REALTEK, 0x0900)
 #define HDA_CODEC_ALCS1220A         HDA_CODEC_CONSTRUCT(REALTEK, 0x1168) // A = Asus
 #define HDA_CODEC_ALC1220           HDA_CODEC_CONSTRUCT(REALTEK, 0x1220)
+#define HDA_CODEC_ALC1220_2         HDA_CODEC_CONSTRUCT(REALTEK, 0x0b00)
 #define HDA_CODEC_ALCXXXX           HDA_CODEC_CONSTRUCT(REALTEK, 0xffff)
 
 /* Motorola */
@@ -349,6 +350,7 @@
 #define HDA_CODEC_ATI_ELLESMERE     HDA_CODEC_CONSTRUCT(ATI, 0xaaf0)
 #define HDA_CODEC_ATI_VEGA          HDA_CODEC_CONSTRUCT(ATI, 0xaaf8)
 #define HDA_CODEC_ATI_NAVI          HDA_CODEC_CONSTRUCT(ATI, 0xab38)
+#define HDA_CODEC_ATI_NAVI_2        HDA_CODEC_CONSTRUCT(ATI, 0xab28)
 
 #define HDA_CODEC_ATIXXXX           HDA_CODEC_CONSTRUCT(ATI, 0xffff)
 
@@ -494,6 +496,7 @@ static const struct
     { HDA_CODEC_ALC899,         0x0000, "Realtek ALC899" },
     { HDA_CODEC_ALC1150,        0x0000, "Realtek ALC1150" }, // rev 0x100001
     { HDA_CODEC_ALC1220,        0x0000, "Realtek ALC1220" }, // rev 0x100101, 0x100003
+    { HDA_CODEC_ALC1220_2,      0x0000, "Realtek ALC1220" }, // rev 0x100001
     { HDA_CODEC_ALCS1220A,      0x0000, "Realtek ALCS1220A" },
     { HDA_CODEC_AD1882,         0x0000, "Analog Devices AD1882" },
     { HDA_CODEC_AD1882A,        0x0000, "Analog Devices AD1882A" },
@@ -715,8 +718,9 @@ static const struct
     { HDA_CODEC_ATI_FIJI,       0x0000, "ATI Fiji HDMI [Radeon R9 Nano/Fury(X)]" },
     { HDA_CODEC_ATI_ELLESMERE,  0x0000, "ATI Ellesmere HDMI [Radeon RX 470/480/570/580/590]" },
     { HDA_CODEC_ATI_VEGA,       0x0000, "ATI Vega HDMI [56/64 CU]" },
-    { HDA_CODEC_ATI_NAVI,       0x0000, "ATI Navi HDMI [Radeon RX 5500(XT)/5700(XT)]" },
-    
+    { HDA_CODEC_ATI_NAVI,       0x0000, "ATI Navi HDMI [Radeon RX 5500(XT)/5600(XT)/5700(XT)]" },
+    { HDA_CODEC_ATI_NAVI_2,     0x0000, "ATI Navi 2.0 HDMI [Radeon RX 6800(XT)/6900(XT)]" },
+
     
     /* Nvidia */
     { HDA_CODEC_NVIDIAMCP67,    0x0000, "NVidia MCP67 HDMI" },
